@@ -1,0 +1,1647 @@
+<html lang="en"><head><base href="https://110235801-atari-embeds.googleusercontent.com/embeds/7b1fab8145be131e22969eee9027b9ad/inner-frame-minified.html?jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.etOqPKhAhvg.O%2Fd%3D1%2Frs%3DAHpOoo-l5JrVgGKVELwC844E6riBHX86-w%2Fm%3D__features__" target="_blank">
+      <script>
+        (function() {
+          // Listen during capturing phase to intercept before <base target="_blank"> takes effect.
+          document.addEventListener('click', function(e) {
+            // Find the nearest ancestor anchor (handles nested icons, spans, svgs).
+            var el = e.target;
+            var anchor = null;
+            while (el && el !== document) {
+              if (el.tagName && el.tagName.toLowerCase() === 'a') {
+                anchor = el;
+                break;
+              }
+              el = el.parentElement;
+            }
+            if (!anchor) return;
+
+            // Only intercept relative in-page fragment links, not external links with hashes.
+            var href = anchor.getAttribute('href');
+            if (!href) return;
+            href = href.trim();
+            if (!href.startsWith('#')) return;
+
+            // Prevent default <base target="_blank"> navigation to a new blank tab.
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Handle empty anchor or top anchor.
+            if (href === '#' || href === '#top') {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              return;
+            }
+
+            // Resolve target element by id, falling back to legacy name attribute.
+            var targetId = href.slice(1);
+            try {
+              targetId = decodeURIComponent(targetId);
+            } catch (err) {}
+
+            var targetEl = document.getElementById(targetId);
+            if (!targetEl) {
+              try {
+                var escaped = window.CSS && CSS.escape ? CSS.escape(targetId) : targetId.replace(/["\\]/g, '\\$&');
+                targetEl = document.querySelector('[name="' + escaped + '"]');
+              } catch (err) {}
+            }
+
+            // Smoothly scroll to the target within the embed and update URL hash history.
+            if (targetEl) {
+              targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              if (window.history && window.history.pushState) {
+                window.history.pushState(null, '', href);
+              }
+            }
+          }, true); // useCapture: true is critical to preempt <base target="_blank">
+        })();
+      </script>
+    
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Listening &amp; Real-Time Crisis Alert Engine | BST 4421</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0B0F19',
+                            card: '#111827',
+                            border: '#1F2937',
+                            accent: '#3B82F6'
+                        },
+                        rag: {
+                            green: '#10B981',
+                            amber: '#F59E0B',
+                            red: '#EF4444'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'beacon-red': 'beaconRed 1.5s infinite',
+                    },
+                    keyframes: {
+                        beaconRed: {
+                            '0%, 100%': { boxShadow: '0 0 15px rgba(239, 68, 68, 0.6)' },
+                            '50%': { boxShadow: '0 0 35px rgba(239, 68, 68, 0.95)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4B5563;
+        }
+        .glow-red {
+            box-shadow: 0 0 25px -5px rgba(239, 68, 68, 0.5);
+        }
+        .glow-amber {
+            box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.5);
+        }
+        .glow-green {
+            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.4);
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:JetBrains Mono, monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.top-0{top:0px}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.ml-2{margin-left:0.5rem}.mr-1{margin-right:0.25rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-2{height:0.5rem}.h-20{height:5rem}.h-52{height:13rem}.h-64{height:16rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-full{height:100%}.max-h-96{max-height:24rem}.max-h-\[90vh\]{max-height:90vh}.min-h-screen{min-height:100vh}.w-2{width:0.5rem}.w-20{width:5rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-full{width:100%}.max-w-2xl{max-width:42rem}.max-w-7xl{max-width:80rem}.max-w-xl{max-width:36rem}.flex-1{flex:1 1 0%}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes ping{75%, 100%{transform:scale(2);opacity:0}}.animate-ping{animation:ping 1s cubic-bezier(0, 0, 0.2, 1) infinite}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}@keyframes spin{to{transform:rotate(360deg)}}.animate-spin{animation:spin 1s linear infinite}.cursor-pointer{cursor:pointer}.select-all{-webkit-user-select:all;user-select:all}.list-inside{list-style-position:inside}.list-decimal{list-style-type:decimal}.appearance-none{-webkit-appearance:none;appearance:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-blue-500\/30{border-color:rgb(59 130 246 / 0.3)}.border-blue-500\/40{border-color:rgb(59 130 246 / 0.4)}.border-blue-500\/50{border-color:rgb(59 130 246 / 0.5)}.border-blue-600\/50{border-color:rgb(37 99 235 / 0.5)}.border-blue-900\/60{border-color:rgb(30 58 138 / 0.6)}.border-brand-border{--tw-border-opacity:1;border-color:rgb(31 41 55 / var(--tw-border-opacity, 1))}.border-emerald-500\/30{border-color:rgb(16 185 129 / 0.3)}.border-emerald-500\/40{border-color:rgb(16 185 129 / 0.4)}.border-emerald-500\/50{border-color:rgb(16 185 129 / 0.5)}.border-emerald-800\/60{border-color:rgb(6 95 70 / 0.6)}.border-purple-500\/30{border-color:rgb(168 85 247 / 0.3)}.border-purple-700\/50{border-color:rgb(126 34 206 / 0.5)}.border-purple-800\/40{border-color:rgb(107 33 168 / 0.4)}.border-red-800\/40{border-color:rgb(153 27 27 / 0.4)}.border-red-800\/60{border-color:rgb(153 27 27 / 0.6)}.border-red-900\/40{border-color:rgb(127 29 29 / 0.4)}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.border-slate-800\/80{border-color:rgb(30 41 59 / 0.8)}.bg-black\/80{background-color:rgb(0 0 0 / 0.8)}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-500\/10{background-color:rgb(59 130 246 / 0.1)}.bg-blue-500\/20{background-color:rgb(59 130 246 / 0.2)}.bg-blue-600\/20{background-color:rgb(37 99 235 / 0.2)}.bg-blue-600\/30{background-color:rgb(37 99 235 / 0.3)}.bg-blue-900\/60{background-color:rgb(30 58 138 / 0.6)}.bg-blue-950\/30{background-color:rgb(23 37 84 / 0.3)}.bg-brand-card{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-brand-dark{--tw-bg-opacity:1;background-color:rgb(11 15 25 / var(--tw-bg-opacity, 1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/10{background-color:rgb(16 185 129 / 0.1)}.bg-emerald-500\/20{background-color:rgb(16 185 129 / 0.2)}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-emerald-600\/20{background-color:rgb(5 150 105 / 0.2)}.bg-emerald-950\/80{background-color:rgb(2 44 34 / 0.8)}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-purple-500\/10{background-color:rgb(168 85 247 / 0.1)}.bg-purple-950\/60{background-color:rgb(59 7 100 / 0.6)}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-red-950\/40{background-color:rgb(69 10 10 / 0.4)}.bg-red-950\/60{background-color:rgb(69 10 10 / 0.6)}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-800\/80{background-color:rgb(30 41 59 / 0.8)}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-slate-900\/60{background-color:rgb(15 23 42 / 0.6)}.bg-slate-900\/90{background-color:rgb(15 23 42 / 0.9)}.bg-slate-950{--tw-bg-opacity:1;background-color:rgb(2 6 23 / var(--tw-bg-opacity, 1))}.bg-slate-950\/80{background-color:rgb(2 6 23 / 0.8)}.bg-red-950\/80{background-color:rgb(69 10 10 / 0.8)}.bg-slate-900\/80{background-color:rgb(15 23 42 / 0.8)}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-emerald-950\/40{--tw-gradient-from:rgb(2 44 34 / 0.4) var(--tw-gradient-from-position);--tw-gradient-to:rgb(2 44 34 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-slate-900{--tw-gradient-to:rgb(15 23 42 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #0f172a var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-slate-950{--tw-gradient-to:#020617 var(--tw-gradient-to-position)}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-3\.5{padding:0.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pb-2{padding-bottom:0.5rem}.pb-4{padding-bottom:1rem}.pr-1{padding-right:0.25rem}.pt-1{padding-top:0.25rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.text-center{text-align:center}.text-right{text-align:right}.font-mono{font-family:JetBrains Mono, monospace}.font-sans{font-family:Inter, sans-serif}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.tracking-tight{letter-spacing:-0.025em}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-blue-200{--tw-text-opacity:1;color:rgb(191 219 254 / var(--tw-text-opacity, 1))}.text-blue-300{--tw-text-opacity:1;color:rgb(147 197 253 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-purple-300{--tw-text-opacity:1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-red-200{--tw-text-opacity:1;color:rgb(254 202 202 / var(--tw-text-opacity, 1))}.text-red-300{--tw-text-opacity:1;color:rgb(252 165 165 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.accent-blue-500{accent-color:#3b82f6}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-emerald-950{--tw-shadow-color:#022c22;--tw-shadow:var(--tw-shadow-colored)}.shadow-red-900\/40{--tw-shadow-color:rgb(127 29 29 / 0.4);--tw-shadow:var(--tw-shadow-colored)}.shadow-red-950{--tw-shadow-color:#450a0a;--tw-shadow:var(--tw-shadow-colored)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.duration-500{transition-duration:500ms}.selection\:bg-blue-600 *::selection{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-blue-600::selection{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:border-slate-700:hover{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.hover\:bg-blue-600\/30:hover{background-color:rgb(37 99 235 / 0.3)}.hover\:bg-blue-600\/40:hover{background-color:rgb(37 99 235 / 0.4)}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.hover\:bg-emerald-600\/30:hover{background-color:rgb(5 150 105 / 0.3)}.hover\:bg-red-500:hover{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}@media (min-width: 640px){.sm\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}}@media (min-width: 768px){.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}}@media (min-width: 1024px){.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:w-96{width:24rem}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:flex-row{flex-direction:row}.lg\:items-center{align-items:center}.lg\:p-6{padding:1.5rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}}</style><style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:JetBrains Mono, monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.top-0{top:0px}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.ml-2{margin-left:0.5rem}.mr-1{margin-right:0.25rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-2{height:0.5rem}.h-20{height:5rem}.h-52{height:13rem}.h-64{height:16rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-full{height:100%}.max-h-96{max-height:24rem}.max-h-\[90vh\]{max-height:90vh}.min-h-screen{min-height:100vh}.w-2{width:0.5rem}.w-20{width:5rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-full{width:100%}.max-w-2xl{max-width:42rem}.max-w-7xl{max-width:80rem}.max-w-xl{max-width:36rem}.flex-1{flex:1 1 0%}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes ping{75%, 100%{transform:scale(2);opacity:0}}.animate-ping{animation:ping 1s cubic-bezier(0, 0, 0.2, 1) infinite}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}@keyframes spin{to{transform:rotate(360deg)}}.animate-spin{animation:spin 1s linear infinite}.cursor-pointer{cursor:pointer}.select-all{-webkit-user-select:all;user-select:all}.list-inside{list-style-position:inside}.list-decimal{list-style-type:decimal}.appearance-none{-webkit-appearance:none;appearance:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-blue-500\/30{border-color:rgb(59 130 246 / 0.3)}.border-blue-500\/40{border-color:rgb(59 130 246 / 0.4)}.border-blue-500\/50{border-color:rgb(59 130 246 / 0.5)}.border-blue-600\/50{border-color:rgb(37 99 235 / 0.5)}.border-blue-900\/60{border-color:rgb(30 58 138 / 0.6)}.border-brand-border{--tw-border-opacity:1;border-color:rgb(31 41 55 / var(--tw-border-opacity, 1))}.border-emerald-500\/30{border-color:rgb(16 185 129 / 0.3)}.border-emerald-500\/40{border-color:rgb(16 185 129 / 0.4)}.border-emerald-500\/50{border-color:rgb(16 185 129 / 0.5)}.border-emerald-800\/60{border-color:rgb(6 95 70 / 0.6)}.border-purple-500\/30{border-color:rgb(168 85 247 / 0.3)}.border-purple-700\/50{border-color:rgb(126 34 206 / 0.5)}.border-purple-800\/40{border-color:rgb(107 33 168 / 0.4)}.border-red-800\/40{border-color:rgb(153 27 27 / 0.4)}.border-red-800\/60{border-color:rgb(153 27 27 / 0.6)}.border-red-900\/40{border-color:rgb(127 29 29 / 0.4)}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.border-slate-800\/80{border-color:rgb(30 41 59 / 0.8)}.bg-black\/80{background-color:rgb(0 0 0 / 0.8)}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-500\/10{background-color:rgb(59 130 246 / 0.1)}.bg-blue-500\/20{background-color:rgb(59 130 246 / 0.2)}.bg-blue-600\/20{background-color:rgb(37 99 235 / 0.2)}.bg-blue-600\/30{background-color:rgb(37 99 235 / 0.3)}.bg-blue-900\/60{background-color:rgb(30 58 138 / 0.6)}.bg-blue-950\/30{background-color:rgb(23 37 84 / 0.3)}.bg-brand-card{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-brand-dark{--tw-bg-opacity:1;background-color:rgb(11 15 25 / var(--tw-bg-opacity, 1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/10{background-color:rgb(16 185 129 / 0.1)}.bg-emerald-500\/20{background-color:rgb(16 185 129 / 0.2)}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-emerald-600\/20{background-color:rgb(5 150 105 / 0.2)}.bg-emerald-950\/80{background-color:rgb(2 44 34 / 0.8)}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-purple-500\/10{background-color:rgb(168 85 247 / 0.1)}.bg-purple-950\/60{background-color:rgb(59 7 100 / 0.6)}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-red-950\/40{background-color:rgb(69 10 10 / 0.4)}.bg-red-950\/60{background-color:rgb(69 10 10 / 0.6)}.bg-red-950\/80{background-color:rgb(69 10 10 / 0.8)}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-800\/80{background-color:rgb(30 41 59 / 0.8)}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-slate-900\/60{background-color:rgb(15 23 42 / 0.6)}.bg-slate-900\/80{background-color:rgb(15 23 42 / 0.8)}.bg-slate-900\/90{background-color:rgb(15 23 42 / 0.9)}.bg-slate-950{--tw-bg-opacity:1;background-color:rgb(2 6 23 / var(--tw-bg-opacity, 1))}.bg-slate-950\/80{background-color:rgb(2 6 23 / 0.8)}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-emerald-950\/40{--tw-gradient-from:rgb(2 44 34 / 0.4) var(--tw-gradient-from-position);--tw-gradient-to:rgb(2 44 34 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-slate-900{--tw-gradient-to:rgb(15 23 42 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #0f172a var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-slate-950{--tw-gradient-to:#020617 var(--tw-gradient-to-position)}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-2\.5{padding:0.625rem}.p-3{padding:0.75rem}.p-3\.5{padding:0.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pb-2{padding-bottom:0.5rem}.pb-4{padding-bottom:1rem}.pr-1{padding-right:0.25rem}.pt-1{padding-top:0.25rem}.pt-2{padding-top:0.5rem}.pt-3{padding-top:0.75rem}.text-center{text-align:center}.text-right{text-align:right}.font-mono{font-family:JetBrains Mono, monospace}.font-sans{font-family:Inter, sans-serif}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.tracking-tight{letter-spacing:-0.025em}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-blue-200{--tw-text-opacity:1;color:rgb(191 219 254 / var(--tw-text-opacity, 1))}.text-blue-300{--tw-text-opacity:1;color:rgb(147 197 253 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-orange-500{--tw-text-opacity:1;color:rgb(249 115 22 / var(--tw-text-opacity, 1))}.text-purple-300{--tw-text-opacity:1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-red-200{--tw-text-opacity:1;color:rgb(254 202 202 / var(--tw-text-opacity, 1))}.text-red-300{--tw-text-opacity:1;color:rgb(252 165 165 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.accent-blue-500{accent-color:#3b82f6}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-emerald-950{--tw-shadow-color:#022c22;--tw-shadow:var(--tw-shadow-colored)}.shadow-red-900\/40{--tw-shadow-color:rgb(127 29 29 / 0.4);--tw-shadow:var(--tw-shadow-colored)}.shadow-red-950{--tw-shadow-color:#450a0a;--tw-shadow:var(--tw-shadow-colored)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.duration-500{transition-duration:500ms}.selection\:bg-blue-600 *::selection{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-blue-600::selection{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:border-slate-700:hover{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.hover\:bg-blue-600\/30:hover{background-color:rgb(37 99 235 / 0.3)}.hover\:bg-blue-600\/40:hover{background-color:rgb(37 99 235 / 0.4)}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.hover\:bg-emerald-600\/30:hover{background-color:rgb(5 150 105 / 0.3)}.hover\:bg-red-500:hover{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}@media (min-width: 640px){.sm\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}}@media (min-width: 768px){.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}}@media (min-width: 1024px){.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:w-96{width:24rem}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:flex-row{flex-direction:row}.lg\:items-center{align-items:center}.lg\:p-6{padding:1.5rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}}</style></head>
+<body class="bg-brand-dark text-slate-200 font-sans min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-brand-border bg-slate-950/80 backdrop-blur sticky top-0 z-40 px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="h-9 w-9 rounded-lg bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-bold text-lg">
+                    <i class="fa-solid fa-radar animate-spin" style="animation-duration: 8s;"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-mono tracking-widest text-blue-400 font-semibold uppercase">BST 4421 · AI in Marketing · Brief #5</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">Zero-Cost Free Stack</span>
+                    </div>
+                    <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                        Social Listening &amp; Real-Time Crisis Alert Engine
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Header Badges & Actions -->
+            <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium bg-purple-950/60 text-purple-300 border border-purple-700/50">
+                    <i class="fa-solid fa-database text-purple-400"></i>
+                    SIMULATED DATA (393 mentions)
+                </span>
+                
+                <button onclick="openShareModal()" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-emerald-500/50 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 flex items-center gap-1.5 transition shadow-sm">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    <span>Get Public Link</span>
+                </button>
+
+                <button id="audioToggleBtn" onclick="toggleAudio()" class="px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition">
+                    <i id="audioIcon" class="fa-solid fa-volume-xmark"></i>
+                    <span id="audioText">Muted</span>
+                </button>
+
+                <button onclick="openAuditModal()" class="px-3 py-1.5 rounded-lg text-xs font-medium border border-blue-600/50 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    <span>Human Audit (20-Sample)</span>
+                </button>
+
+                <button onclick="triggerDispatchModal()" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-500 text-white flex items-center gap-2 shadow-lg shadow-red-900/40 transition">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Fire Alert Payload</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 space-y-6">
+
+        <!-- RAG Dynamic Banner & Retro-Test Timeline Scrubber -->
+        <section id="ragBanner" class="p-5 rounded-2xl border transition-all duration-500 glow-green bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-950 border-emerald-500/30">
+            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                <!-- Left: Big Score & Status Label -->
+                <div class="flex items-center gap-5">
+                    <div id="ragScoreBadge" class="w-20 h-20 rounded-2xl flex flex-col items-center justify-center font-mono font-black text-3xl shadow-inner bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                        <span id="scoreValue">24</span>
+                        <span class="text-[10px] tracking-widest uppercase font-sans font-bold text-slate-400">/ 100</span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <span id="ragStatusPill" class="px-3 py-1 rounded-md text-xs font-mono font-bold tracking-wider uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">● GREEN · NOMINAL</span>
+                            <span id="replayTimeDisplay" class="font-mono text-sm font-semibold text-slate-300 bg-slate-800/80 px-2.5 py-1 rounded border border-slate-700">08:00 IST</span>
+                        </div>
+                        <h2 id="ragStatusTitle" class="text-xl font-bold text-white mt-1">Normal brand sentiment &amp; steady baseline velocity</h2>
+                        <p id="ragStatusSubtitle" class="text-xs text-slate-400 max-w-xl">All conversational parameters are within baseline standard deviations. No escalation required.</p>
+                    </div>
+                </div>
+
+                <!-- Right: Interactive Retro-Test Time Replay Controls -->
+                <div class="w-full lg:w-96 bg-slate-900/90 p-4 rounded-xl border border-slate-800 shadow-md">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-medium text-slate-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-clock-rotate-left text-blue-400"></i> Step 6 Retro-Test Replay:
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <button id="playBtn" onclick="togglePlayTimeline()" class="text-xs px-2.5 py-0.5 rounded bg-blue-600/30 border border-blue-500/50 text-blue-300 hover:bg-blue-600/40 transition font-mono">
+                                <i class="fa-solid fa-play mr-1"></i>Play
+                            </button>
+                            <span class="text-[11px] font-mono text-slate-400">Crisis Window</span>
+                        </div>
+                    </div>
+                    <input type="range" id="timelineSlider" min="0" max="14" value="0" step="1" oninput="handleSliderChange(this.value)" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500">
+                    <div class="flex justify-between text-[10px] font-mono text-slate-500 mt-1.5">
+                        <span>08:00</span>
+                        <span class="text-slate-400 font-semibold">14:00</span>
+                        <span class="text-amber-400 font-bold">17:00 (Amber)</span>
+                        <span class="text-red-400 font-bold">19:00 (Red)</span>
+                        <span>22:00</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formula & Mathematical Breakdown Panel -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Factor 1: Volume Spike Z-Score -->
+            <div class="bg-brand-card p-4 rounded-xl border border-brand-border relative overflow-hidden">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Weight: 35%</span>
+                    <span id="zscoreBadge" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/30">Z = +0</span>
+                </div>
+                <div class="text-sm font-semibold text-white">Volume Spike Z-Score</div>
+                <div class="mt-2 flex items-baseline gap-2">
+                    <span id="volPoints" class="text-2xl font-mono font-bold text-blue-400">0</span>
+                    <span class="text-xs text-slate-500">/ 35 pts</span>
+                </div>
+                <div class="mt-3 text-xs text-slate-400 flex items-center justify-between">
+                    <span>Mentions / hr vs 7d Baseline</span>
+                    <span id="volHourlyVal" class="font-mono text-slate-300">12 / hr (μ=12, σ=8.5)</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                    <div id="volProgressBar" class="bg-blue-500 h-full rounded-full transition-all duration-300" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Factor 2: Negative Share -->
+            <div class="bg-brand-card p-4 rounded-xl border border-brand-border relative overflow-hidden">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Weight: 40%</span>
+                    <span id="negShareBadge" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">17% Negative</span>
+                </div>
+                <div class="text-sm font-semibold text-white">Negative Sentiment Share</div>
+                <div class="mt-2 flex items-baseline gap-2">
+                    <span id="negPoints" class="text-2xl font-mono font-bold text-emerald-400">6.7</span>
+                    <span class="text-xs text-slate-500">/ 40 pts</span>
+                </div>
+                <div class="mt-3 text-xs text-slate-400 flex items-center justify-between">
+                    <span>Hinglish + Sarcasm flipped</span>
+                    <span id="negCountDisplay" class="font-mono text-slate-300">2 neg / 12 total</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                    <div id="negProgressBar" class="h-full rounded-full transition-all duration-300 bg-emerald-500" style="width: 17%;"></div>
+                </div>
+            </div>
+
+            <!-- Factor 3: Influencer Amplification -->
+            <div class="bg-brand-card p-4 rounded-xl border border-brand-border relative overflow-hidden">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Weight: 25%</span>
+                    <span id="infReachBadge" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30">7.6k Peak Reach</span>
+                </div>
+                <div class="text-sm font-semibold text-white">Influencer Amplification</div>
+                <div class="mt-2 flex items-baseline gap-2">
+                    <span id="infPoints" class="text-2xl font-mono font-bold text-purple-400">17</span>
+                    <span class="text-xs text-slate-500">/ 25 pts</span>
+                </div>
+                <div class="mt-3 text-xs text-slate-400 flex items-center justify-between">
+                    <span>Reach Tier Scaling</span>
+                    <span id="infTierDisplay" class="font-mono text-slate-300">Tier 3 Micro/Consumer</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                    <div id="infProgressBar" class="bg-purple-500 h-full rounded-full transition-all duration-300" style="width: 68.1427%;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Formula Bar -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-lg px-4 py-2.5 flex flex-wrap items-center justify-between text-xs font-mono text-slate-400 gap-2">
+            <div class="flex items-center gap-2">
+                <span class="text-blue-400 font-semibold">FORMULA:</span>
+                <span>severity = 35 × (vol_spike_z) + 40 × (neg_share) + 25 × (inf_amp)</span>
+            </div>
+            <div class="flex items-center gap-4 text-[11px]">
+                <span class="text-emerald-400">● GREEN &lt; 40</span>
+                <span class="text-amber-400">● AMBER 40–69</span>
+                <span class="text-red-400">● RED ≥ 70</span>
+            </div>
+        </div>
+
+        <!-- Charts Grid (Severity Timeline & Topic Taxonomy) -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Timeline Chart (2 cols) -->
+            <div class="lg:col-span-2 bg-brand-card p-5 rounded-2xl border border-brand-border">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-blue-400"></i> Crisis Score Timeline (Retro-Test)
+                        </h3>
+                        <p class="text-xs text-slate-400">Simulated 14-hour test bench showing early alert lead time</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-[11px] font-mono">
+                        <span class="inline-flex items-center gap-1 text-red-400 font-semibold bg-red-950/40 px-2 py-0.5 rounded border border-red-800/40">
+                            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span> Lead time: +3.5h vs News Cycle
+                        </span>
+                    </div>
+                </div>
+                <div class="h-64 w-full relative">
+                    <canvas id="timelineChart" style="display: block; box-sizing: border-box; height: 256px; width: 680px;" width="850" height="320"></canvas>
+                </div>
+            </div>
+
+            <!-- Topic Family Taxonomy Bar Chart (1 col) -->
+            <div class="bg-brand-card p-5 rounded-2xl border border-brand-border flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-tags text-amber-400"></i> Step 4 Topic Taxonomy
+                        </h3>
+                        <span class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-slate-300">Active Window</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-4">Issue Family keyword mapping ("WHAT is burning")</p>
+                    <div class="h-52 w-full relative">
+                        <canvas id="topicChart" style="display: block; box-sizing: border-box; height: 208px; width: 680px;" width="850" height="260"></canvas>
+                    </div>
+                </div>
+                <!-- Hinglish & Sarcasm Token Pill Cloud -->
+                <div class="mt-4 pt-3 border-t border-slate-800">
+                    <div class="text-[11px] font-mono text-slate-400 mb-2 flex justify-between">
+                        <span>NLP Lexicon Flags:</span>
+                        <span class="text-emerald-400">Hinglish + Sarcasm</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-red-950/60 text-red-300 border border-red-800/40">"bekar" (Neg)</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-red-950/60 text-red-300 border border-red-800/40">"ghatiya" (Neg)</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-red-950/60 text-red-300 border border-red-800/40">"kharab" (Neg)</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-purple-950/60 text-purple-300 border border-purple-800/40">"Wow great, another breakdown" ➔ NEG</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Mention Stream & Filter Bar -->
+        <section class="bg-brand-card p-5 rounded-2xl border border-brand-border">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 pb-4 border-b border-brand-border">
+                <div>
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-satellite-dish text-blue-400"></i> Mention Stream Pipeline
+                        <span id="filteredCountBadge" class="text-xs font-mono font-medium bg-slate-800 px-2 py-0.5 rounded-full text-slate-300 ml-2">Showing 12 of 12 cumulative mentions</span>
+                    </h3>
+                    <p class="text-xs text-slate-400">Lexicon-scored posts with Hinglish negations and sarcasm resolution</p>
+                </div>
+
+                <!-- Filters -->
+                <div class="flex flex-wrap items-center gap-2 text-xs">
+                    <!-- Sentiment Filter -->
+                    <select id="filterSentiment" onchange="applyFilters()" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-mono">
+                        <option value="ALL">All Sentiments</option>
+                        <option value="NEGATIVE">Negative Only</option>
+                        <option value="POSITIVE">Positive Only</option>
+                        <option value="NEUTRAL">Neutral Only</option>
+                    </select>
+
+                    <!-- Topic Filter -->
+                    <select id="filterTopic" onchange="applyFilters()" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-mono">
+                        <option value="ALL">All Topic Families</option>
+                        <option value="battery/range">Battery / Range</option>
+                        <option value="service &amp; warranty">Service &amp; Warranty</option>
+                        <option value="delivery">Delivery</option>
+                        <option value="software/app">Software / App</option>
+                        <option value="pricing">Pricing</option>
+                    </select>
+
+                    <!-- Source Filter -->
+                    <select id="filterSource" onchange="applyFilters()" class="bg-slate-900 border border-slate-700 text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 font-mono">
+                        <option value="ALL">All Sources</option>
+                        <option value="X">X (Twitter)</option>
+                        <option value="Reddit">Reddit</option>
+                        <option value="YouTube">YouTube</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Feed Table / Cards Container -->
+            <div id="mentionContainer" class="space-y-3 max-h-96 overflow-y-auto pr-1"><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-x-twitter text-slate-300"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">X</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:03 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">POS (+0.72)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Got the delivery right on Dhanteras day! Smooth handover and paperwork.
+                    </p>
+                </div><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-reddit text-orange-500"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">Reddit</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:27 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">POS (+0.72)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Got the delivery right on Dhanteras day! Smooth handover and paperwork.
+                    </p>
+                </div><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-youtube text-red-500"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">YouTube</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:08 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">POS (+0.72)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Got the delivery right on Dhanteras day! Smooth handover and paperwork.
+                    </p>
+                </div><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-x-twitter text-slate-300"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">X</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:14 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">POS (+0.72)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Got the delivery right on Dhanteras day! Smooth handover and paperwork.
+                    </p>
+                </div><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-reddit text-orange-500"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">Reddit</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:10 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">POS (+0.72)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Got the delivery right on Dhanteras day! Smooth handover and paperwork.
+                    </p>
+                </div><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-x-twitter text-slate-300"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">X</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:10 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">POS (+0.72)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Got the delivery right on Dhanteras day! Smooth handover and paperwork.
+                    </p>
+                </div><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-youtube text-red-500"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">YouTube</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:48 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">POS (+0.72)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Got the delivery right on Dhanteras day! Smooth handover and paperwork.
+                    </p>
+                </div><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-reddit text-orange-500"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">Reddit</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:02 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-950/80 text-red-400 border border-red-800/60">NEG (-0.84)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Delivery delayed by 45 days already. Support just repeats templated robotic replies.
+                    </p>
+                </div><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-x-twitter text-slate-300"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">X</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:42 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700">NEU (0.00)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Chassis registration number assigned today. Tracking via app.
+                    </p>
+                </div><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-youtube text-red-500"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">YouTube</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:17 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">POS (+0.72)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Got the delivery right on Dhanteras day! Smooth handover and paperwork.
+                    </p>
+                </div><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-x-twitter text-slate-300"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">X</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:48 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">POS (+0.72)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Got the delivery right on Dhanteras day! Smooth handover and paperwork.
+                    </p>
+                </div><div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-brands fa-youtube text-red-500"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">YouTube</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">08:14 IST</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">delivery</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-950/80 text-red-400 border border-red-800/60">NEG (-0.84)</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        Delivery delayed by 45 days already. Support just repeats templated robotic replies.
+                    </p>
+                </div></div>
+        </section>
+
+    </main>
+
+    <!-- Footer with Governance & Tool Stack Reference -->
+    <footer class="border-t border-brand-border bg-slate-950 py-4 px-6 mt-8 text-xs font-mono text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div>
+                RLP Brief #5 Demo Artifact · <span class="text-slate-400">Step 10 Telegram API &amp; Step 11 Governance Roster</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-emerald-400 hover:underline cursor-pointer" onclick="openShareModal()"><i class="fa-solid fa-globe mr-1"></i>Host Live (Step 8 &amp; 9)</span>
+                <span class="text-blue-400 hover:underline cursor-pointer" onclick="openAuditModal()">Audit Baseline: 80% Acc / 79% Neg Prec</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL 3: Get Public Link & Host Free Modal (Step 8 & Step 9) -->
+    <div id="shareModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">How to Get a Live Public Web Link (Rs. 0 Cost)</h3>
+                        <p class="text-[11px] text-slate-400 font-mono">Guide Steps 8 &amp; 9: Free Public URL Deployment</p>
+                    </div>
+                </div>
+                <button onclick="closeShareModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-5 space-y-4 text-xs">
+                <!-- Option A: GitHub Pages -->
+                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-emerald-400 flex items-center gap-2">
+                            <i class="fa-brands fa-github"></i> Option 1: GitHub Pages (Instant 60s Static Link)
+                        </span>
+                        <span class="font-mono text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded">Fastest</span>
+                    </div>
+                    <ol class="list-decimal list-inside space-y-1 text-slate-300 font-sans leading-relaxed">
+                        <li>Save this file as <code class="text-blue-400 font-mono">index.html</code>.</li>
+                        <li>Create a free public repository on <strong>github.com</strong> and upload this file.</li>
+                        <li>Go to <strong>Settings → Pages → Branch: main /root</strong> and click <strong>Save</strong>.</li>
+                        <li>Your live shareable URL will be ready:
+                            <div class="mt-1 font-mono text-[11px] bg-slate-900 text-blue-300 p-2 rounded border border-slate-800 select-all">
+                                https://&lt;your-github-username&gt;.github.io/&lt;repo-name&gt;/
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Option B: Streamlit Community Cloud -->
+                <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-blue-400 flex items-center gap-2">
+                            <i class="fa-solid fa-server"></i> Option 2: Streamlit Cloud (Python Backend Link)
+                        </span>
+                        <span class="font-mono text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded">Step 8</span>
+                    </div>
+                    <p class="text-slate-300 leading-relaxed">
+                        Push the <code class="text-amber-400 font-mono">app.py</code> and simulated CSVs from your project folder to GitHub, then link with <a href="https://share.streamlit.io" target="_blank" class="text-blue-400 underline">share.streamlit.io</a> to get:
+                    </p>
+                    <div class="font-mono text-[11px] bg-slate-900 text-purple-300 p-2 rounded border border-slate-800 select-all">
+                        https://&lt;your-username&gt;-crisis-alert-engine.streamlit.app
+                    </div>
+                </div>
+
+                <!-- Direct HTML Downloader -->
+                <button onclick="downloadHtmlFile()" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center justify-center gap-2 transition shadow-lg shadow-emerald-950">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Download this Single-File Prototype (index.html)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 1: Telegram Bot / On-Call Pager Alert Dispatcher -->
+    <div id="alertModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden transform transition-all">
+            <!-- Modal Header -->
+            <div class="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                        <i class="fa-brands fa-telegram text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-white flex items-center gap-2">
+                            Telegram Bot Paging Engine <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-900/60 text-blue-300">BotFather API v2</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 font-mono">Recipient: @crisis_war_room_bot · On-Call Phone Paged</div>
+                    </div>
+                </div>
+                <button onclick="closeDispatchModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Telegram Chat Box Preview -->
+            <div class="p-5 space-y-4">
+                <!-- Chat Bubble Container -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-200 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                        <span id="modalAlertBadge" class="px-2.5 py-1 rounded font-bold uppercase tracking-wide bg-red-600 text-white animate-pulse">
+                            🚨 RED CRISIS ALERT
+                        </span>
+                        <span id="modalTimestamp" class="text-slate-400 text-[11px]">19:00 IST</span>
+                    </div>
+
+                    <div class="space-y-1 text-slate-300">
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Crisis Severity Score:</span>
+                            <span id="modalSeverity" class="font-bold text-red-400">78.4 / 100 (Threshold ≥ 70)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Top Issue Family:</span>
+                            <span id="modalTopIssue" class="font-bold text-white">Battery / Range (Thermal Runaway)</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Negative Velocity:</span>
+                            <span id="modalVelocity" class="text-amber-400">68% Neg · Z-Score: +3.82</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Top Amplification:</span>
+                            <span id="modalReach" class="text-purple-400">@AutoTechReviewer (450K reach)</span>
+                        </div>
+                    </div>
+
+                    <!-- Escalation Protocol & SLA Box -->
+                    <div class="bg-red-950/40 border border-red-800/60 rounded p-3 text-red-200 space-y-1 text-[11px]">
+                        <div class="font-bold flex items-center gap-1.5 text-red-300">
+                            <i class="fa-solid fa-stopwatch"></i> SLA MANDATE: 15-Minute First Response
+                        </div>
+                        <p>1. On-Call PR Lead: Stand by for media queries.</p>
+                        <p>2. Engineering Lead: Validate firmware logs for BMS error codes.</p>
+                        <p>3. Social Team: Halt scheduled promotional tweets immediately.</p>
+                    </div>
+
+                    <!-- Holding Statement Auto-Selector -->
+                    <div class="pt-2">
+                        <label class="text-[11px] font-sans font-semibold text-slate-400 block mb-1">
+                            Recommended Holding Statement (Auto-selected for Battery Issue):
+                        </label>
+                        <div id="holdingStatementText" class="p-2.5 bg-slate-900 rounded border border-slate-700 text-slate-200 text-xs italic select-all">
+                            "We are aware of the isolated vehicle range reports shared this evening. Our safety &amp; engineering teams are currently reviewing telematics data directly with the affected owners. We will share a technical bulletin within 2 hours. Safety remains our paramount priority."
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="flex items-center justify-between gap-3 pt-1">
+                    <button onclick="copyPayloadToClipboard()" id="copyPayloadBtn" class="flex-1 py-2 px-3 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                        <i class="fa-regular fa-copy"></i>
+                        <span id="copyBtnText">Copy Raw Payload JSON</span>
+                    </button>
+                    <button onclick="sendSimulatedAlert()" id="sendSimulatedAlertBtn" class="flex-1 py-2 px-3 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-lg shadow-red-950 transition">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Confirm Dispatch (Paging)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Step 3 Hand Audit & Miss Analysis Modal -->
+    <div id="auditModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-microscope text-blue-400"></i> Step 3 Hand-Audit Validation (20-Sample Benchmark)
+                    </h3>
+                    <p class="text-xs text-slate-400 font-mono">Human Ground-Truth vs Lexicon Model Comparison</p>
+                </div>
+                <button onclick="closeAuditModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-5 overflow-y-auto space-y-5">
+                <!-- Accuracy Metrics Summary Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-center">
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-slate-400 text-[10px] uppercase">Accuracy</span>
+                        <div class="text-xl font-bold text-emerald-400 mt-1">80.0%</div>
+                        <span class="text-[10px] text-slate-500">16 / 20 correct</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-slate-400 text-[10px] uppercase">Neg Precision</span>
+                        <div class="text-xl font-bold text-blue-400 mt-1">78.6%</div>
+                        <span class="text-[10px] text-slate-500">11 / 14 predicted</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-slate-400 text-[10px] uppercase">Neg Recall</span>
+                        <div class="text-xl font-bold text-purple-400 mt-1">84.6%</div>
+                        <span class="text-[10px] text-slate-500">11 / 13 actual</span>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <span class="text-slate-400 text-[10px] uppercase">F1-Score</span>
+                        <div class="text-xl font-bold text-amber-400 mt-1">81.5%</div>
+                        <span class="text-[10px] text-slate-500">Negative Class</span>
+                    </div>
+                </div>
+
+                <!-- Explanation / Grading Narrative -->
+                <div class="bg-blue-950/30 border border-blue-900/60 rounded-xl p-3.5 text-xs text-blue-200 leading-relaxed">
+                    <strong class="text-blue-300">Why Showing Misses Wins Marks:</strong> No NLP engine has 100% precision. Lexicons stumble on double-negatives and cultural slang, while catching explicit Hinglish tokens (<em>ghatiya</em>, <em>bekar</em>). Below are the 4 logged classification errors audited by hand:
+                </div>
+
+                <!-- Miss Breakdown List -->
+                <div class="space-y-2.5 font-mono text-xs">
+                    <div class="p-3 rounded-lg bg-slate-950 border border-red-900/40">
+                        <div class="flex items-center justify-between text-[11px] mb-1">
+                            <span class="text-red-400 font-bold">Miss #1: False Positive (Neg instead of Neu)</span>
+                            <span class="text-slate-500">ID #104</span>
+                        </div>
+                        <p class="text-slate-300 font-sans italic">"The battery didn't fail completely, it just charged slower than normal."</p>
+                        <div class="text-slate-400 text-[10px] mt-2">
+                            • Reason: Model caught "fail" and penalized sentence; missed negation context "didn't fail".
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-lg bg-slate-950 border border-red-900/40">
+                        <div class="flex items-center justify-between text-[11px] mb-1">
+                            <span class="text-red-400 font-bold">Miss #2: False Negative (Neu instead of Neg)</span>
+                            <span class="text-slate-500">ID #218</span>
+                        </div>
+                        <p class="text-slate-300 font-sans italic">"Service manager looked at my bike and just shrugged his shoulders."</p>
+                        <div class="text-slate-400 text-[10px] mt-2">
+                            • Reason: Shrugged shoulders conveys poor service to humans, but lexicon contains no negative keyword.
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-lg bg-slate-950 border border-red-900/40">
+                        <div class="flex items-center justify-between text-[11px] mb-1">
+                            <span class="text-red-400 font-bold">Miss #3: Sarcasm Edge Case</span>
+                            <span class="text-slate-500">ID #332</span>
+                        </div>
+                        <p class="text-slate-300 font-sans italic">"Fabulous service! Third tow truck in one month. Truly revolutionary."</p>
+                        <div class="text-slate-400 text-[10px] mt-2">
+                            • Reason: Positive adjectives "fabulous" &amp; "revolutionary" masked negative tow truck count before sarcasm flipper fired.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 bg-slate-950 border-t border-slate-800 text-right">
+                <button onclick="closeAuditModal()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Web Audio & Notification Sound Synth -->
+    <script>
+        // Sound state
+        let audioEnabled = false;
+        let audioCtx = null;
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const icon = document.getElementById('audioIcon');
+            const text = document.getElementById('audioText');
+            const btn = document.getElementById('audioToggleBtn');
+            if (audioEnabled) {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                icon.className = "fa-solid fa-volume-high text-emerald-400";
+                text.textContent = "Alarm On";
+                btn.classList.add('border-emerald-500/50', 'bg-emerald-950/30');
+                playChirp(880, 0.1);
+            } else {
+                icon.className = "fa-solid fa-volume-xmark";
+                text.textContent = "Muted";
+                btn.classList.remove('border-emerald-500/50', 'bg-emerald-950/30');
+            }
+        }
+
+        function playChirp(freq, duration) {
+            if (!audioEnabled || !audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {
+                console.error("Audio synth error", e);
+            }
+        }
+
+        function playCrisisSiren() {
+            if (!audioEnabled || !audioCtx) return;
+            try {
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(500, now);
+                osc.frequency.linearRampToValueAtTime(950, now + 0.25);
+                osc.frequency.linearRampToValueAtTime(500, now + 0.5);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } catch(e) {
+                console.error("Siren error", e);
+            }
+        }
+
+        /* ----------------------------------------------------
+           DATASET GENERATOR: 393 Simulated Mentions
+           Spread across 08:00 to 22:00 (14 hourly steps)
+           Topics: battery/range, service & warranty, delivery, software/app, pricing
+        ---------------------------------------------------- */
+        const TOPICS = [
+            "battery/range",
+            "service & warranty",
+            "delivery",
+            "software/app",
+            "pricing"
+        ];
+
+        const SOURCES = ["X", "Reddit", "YouTube"];
+
+        const SAMPLE_TEXTS = {
+            "battery/range": [
+                { text: "Bike battery dropping from 60% to 5% instantly in traffic. Bilkul ghatiya quality BMS!", sent: "NEGATIVE", hinglish: true },
+                { text: "Range dropped 35km after latest OTA update. Extreme heating during fast charging. Kharab software.", sent: "NEGATIVE", hinglish: true },
+                { text: "Battery shutdown on highway. Had to tow it. This is a severe safety hazard bekar service.", sent: "NEGATIVE", hinglish: true },
+                { text: "Wow great, another breakdown today! Love waiting 3 hours in the sun.", sent: "NEGATIVE", sarcasm: true },
+                { text: "Thermal runaway warnings on console. Motor got disabled in the middle of flyover.", sent: "NEGATIVE" },
+                { text: "Range on eco mode is steady at 120km. Performs as advertised.", sent: "POSITIVE" },
+                { text: "Charging from 20% to 80% took 42 mins today at Ather grid.", sent: "NEUTRAL" }
+            ],
+            "service & warranty": [
+                { text: "Service center says spare parts will take 3 weeks. Bike sitting in dust. Ghatiya service center.", sent: "NEGATIVE", hinglish: true },
+                { text: "Warranty claim rejected citing cosmetic water ingress. Total loot bekar policy.", sent: "NEGATIVE", hinglish: true },
+                { text: "Technician resolved the brake noise in 15 mins at home service. Good experience.", sent: "POSITIVE" },
+                { text: "Regular 5000km scheduled service completed today.", sent: "NEUTRAL" }
+            ],
+            "delivery": [
+                { text: "Delivery delayed by 45 days already. Support just repeats templated robotic replies.", sent: "NEGATIVE" },
+                { text: "Got the delivery right on Dhanteras day! Smooth handover and paperwork.", sent: "POSITIVE" },
+                { text: "Chassis registration number assigned today. Tracking via app.", sent: "NEUTRAL" }
+            ],
+            "software/app": [
+                { text: "App Bluetooth auto-unlock keeps freezing. Left me stranded at parking. Kharab app.", sent: "NEGATIVE", hinglish: true },
+                { text: "Maps navigation crashed mid ride on console screen.", sent: "NEGATIVE" },
+                { text: "New ride analytics screen is super clean and responsive.", sent: "POSITIVE" }
+            ],
+            "pricing": [
+                { text: "FAME subsidy cut made on-road price 1.55L. Way too expensive compared to petrol.", sent: "NEGATIVE" },
+                { text: "Electricity running cost is less than 35 paise per km. Major monthly savings.", sent: "POSITIVE" },
+                { text: "Comparing subscription plans for smart pro connectivity pack.", sent: "NEUTRAL" }
+            ]
+        };
+
+        // Pre-build 393 mentions distributed hourly with realistic spike towards 17:00 and 19:00
+        const ALL_MENTIONS = [];
+        const HOURLY_CONFIG = [
+            /* 08:00 */ { hour: "08:00", count: 12, negRatio: 0.15, topIssue: "delivery", topReach: 1200 },
+            /* 09:00 */ { hour: "09:00", count: 14, negRatio: 0.20, topIssue: "pricing", topReach: 3400 },
+            /* 10:00 */ { hour: "10:00", count: 18, negRatio: 0.22, topIssue: "software/app", topReach: 5200 },
+            /* 11:00 */ { hour: "11:00", count: 16, negRatio: 0.25, topIssue: "service & warranty", topReach: 8900 },
+            /* 12:00 */ { hour: "12:00", count: 15, negRatio: 0.20, topIssue: "battery/range", topReach: 4300 },
+            /* 13:00 */ { hour: "13:00", count: 14, negRatio: 0.28, topIssue: "pricing", topReach: 6100 },
+            /* 14:00 */ { hour: "14:00", count: 20, negRatio: 0.35, topIssue: "service & warranty", topReach: 14000 },
+            /* 15:00 */ { hour: "15:00", count: 24, negRatio: 0.40, topIssue: "battery/range", topReach: 22000 },
+            /* 16:00 */ { hour: "16:00", count: 32, negRatio: 0.48, topIssue: "battery/range", topReach: 48000 },
+            /* 17:00 (AMBER) */ { hour: "17:00", count: 48, negRatio: 0.58, topIssue: "battery/range", topReach: 125000 },
+            /* 18:00 */ { hour: "18:00", count: 52, negRatio: 0.65, topIssue: "battery/range", topReach: 210000 },
+            /* 19:00 (RED) */ { hour: "19:00", count: 68, negRatio: 0.78, topIssue: "battery/range", topReach: 480000 },
+            /* 20:00 */ { hour: "20:00", count: 44, negRatio: 0.72, topIssue: "battery/range", topReach: 320000 },
+            /* 21:00 */ { hour: "21:00", count: 22, negRatio: 0.60, topIssue: "service & warranty", topReach: 90000 },
+            /* 22:00 */ { hour: "22:00", count: 14, negRatio: 0.45, topIssue: "battery/range", topReach: 35000 }
+        ];
+
+        let idCounter = 1;
+        HOURLY_CONFIG.forEach((cfg, hourIdx) => {
+            for (let i = 0; i < cfg.count; i++) {
+                // Determine sentiment based on ratio
+                const isNeg = Math.random() < cfg.negRatio;
+                const sent = isNeg ? "NEGATIVE" : (Math.random() < 0.65 ? "POSITIVE" : "NEUTRAL");
+                
+                // Pick topic: bias towards hourly topIssue
+                const topic = (Math.random() < 0.65) ? cfg.topIssue : TOPICS[Math.floor(Math.random() * TOPICS.length)];
+                
+                // Pick text template
+                const pool = SAMPLE_TEXTS[topic].filter(item => item.sent === sent);
+                const template = pool.length > 0 ? pool[Math.floor(Math.random() * pool.length)] : SAMPLE_TEXTS[topic][0];
+                
+                // Reach
+                let reach;
+                if (i === 0 && cfg.topReach > 50000) {
+                    reach = cfg.topReach; // Influencer mention
+                } else {
+                    reach = Math.floor(Math.random() * (i % 3 === 0 ? 8000 : 900)) + 45;
+                }
+
+                // Random minute
+                const minute = String(Math.floor(Math.random() * 59)).padStart(2, '0');
+
+                ALL_MENTIONS.push({
+                    id: idCounter++,
+                    hourIndex: hourIdx,
+                    timestamp: `${cfg.hour.split(':')[0]}:${minute} IST`,
+                    hourStr: cfg.hour,
+                    source: SOURCES[Math.floor(Math.random() * SOURCES.length)],
+                    topic: topic,
+                    sentiment: template.sent,
+                    text: template.text,
+                    reach: reach,
+                    hinglish: !!template.hinglish,
+                    sarcasm: !!template.sarcasm,
+                    label_source: "SIMULATED"
+                });
+            }
+        });
+
+        /* ----------------------------------------------------
+           CRISIS SEVERITY COMPUTATION ENGINE (BST 4421 Formula)
+           severity = 35 * vol_spike_z + 40 * neg_share + 25 * inf_amp
+           Green < 40, Amber 40-69, Red >= 70
+        ---------------------------------------------------- */
+        const BASELINE_MEAN_VOL = 12.0;
+        const BASELINE_STD_VOL = 8.5;
+        const MAX_Z_CAP = 3.5; // Z-score normalization cap
+
+        function computeHourlyMetrics(hourIdx) {
+            const mentionsAtHour = ALL_MENTIONS.filter(m => m.hourIndex === hourIdx);
+            const count = mentionsAtHour.length;
+            const negCount = mentionsAtHour.filter(m => m.sentiment === "NEGATIVE").length;
+            const negShare = count > 0 ? (negCount / count) : 0;
+            
+            // Z-score for volume spike
+            const zScore = Math.max(0, (count - BASELINE_MEAN_VOL) / BASELINE_STD_VOL);
+            const normZ = Math.min(1.0, zScore / MAX_Z_CAP);
+            
+            // Influencer reach scaling: 500k reach corresponds to 1.0 amplification
+            const maxReach = mentionsAtHour.reduce((max, m) => Math.max(max, m.reach), 0);
+            const infAmp = Math.min(1.0, Math.log10(Math.max(10, maxReach)) / Math.log10(500000));
+
+            // Formula calculation
+            const volComponent = 35 * normZ;
+            const negComponent = 40 * negShare;
+            const infComponent = 25 * infAmp;
+            const severity = Math.min(100, Math.round((volComponent + negComponent + infComponent) * 10) / 10);
+
+            // Determine status
+            let rag = 'GREEN';
+            if (severity >= 70) rag = 'RED';
+            else if (severity >= 40) rag = 'AMBER';
+
+            return {
+                hourStr: HOURLY_CONFIG[hourIdx].hour,
+                count,
+                negCount,
+                negShare,
+                zScore: Math.round(zScore * 100) / 100,
+                normZ,
+                maxReach,
+                infAmp,
+                volComponent: Math.round(volComponent * 10) / 10,
+                negComponent: Math.round(negComponent * 10) / 10,
+                infComponent: Math.round(infComponent * 10) / 10,
+                severity,
+                rag,
+                mentions: mentionsAtHour
+            };
+        }
+
+        // Precompute all hours for charts
+        const HOURLY_RESULTS = HOURLY_CONFIG.map((_, idx) => computeHourlyMetrics(idx));
+
+        /* ----------------------------------------------------
+           CHARTS SETUP (Chart.js)
+        ---------------------------------------------------- */
+        let timelineChart = null;
+        let topicChart = null;
+
+        function initCharts() {
+            // 1. Timeline Chart
+            const ctxTimeline = document.getElementById('timelineChart').getContext('2d');
+            const labels = HOURLY_RESULTS.map(r => r.hourStr);
+            const scores = HOURLY_RESULTS.map(r => r.severity);
+
+            timelineChart = new Chart(ctxTimeline, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Crisis Severity Score',
+                            data: scores,
+                            borderColor: '#3B82F6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                            fill: true,
+                            tension: 0.35,
+                            borderWidth: 3,
+                            pointRadius: 4,
+                            pointBackgroundColor: scores.map(s => s >= 70 ? '#EF4444' : (s >= 40 ? '#F59E0B' : '#10B981')),
+                            pointBorderColor: '#ffffff',
+                            pointHoverRadius: 7
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: {
+                                color: '#94A3B8',
+                                font: { family: 'JetBrains Mono', size: 10 }
+                            }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: {
+                                color: '#94A3B8',
+                                font: { family: 'JetBrains Mono', size: 10 }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0F172A',
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#CBD5E1',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.parsed.y;
+                                    let status = 'GREEN (Nominal)';
+                                    if (val >= 70) status = 'RED (CRISIS ALERT)';
+                                    else if (val >= 40) status = 'AMBER (Monitoring)';
+                                    return `Score: ${val}/100 [${status}]`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Topic Family Bar Chart
+            const ctxTopic = document.getElementById('topicChart').getContext('2d');
+            topicChart = new Chart(ctxTopic, {
+                type: 'bar',
+                data: {
+                    labels: ['Battery', 'Service', 'Delivery', 'Software', 'Pricing'],
+                    datasets: [{
+                        label: 'Negative Volume',
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(168, 85, 247, 0.8)',
+                            'rgba(16, 185, 129, 0.8)'
+                        ],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94A3B8', font: { family: 'JetBrains Mono', size: 9 } }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: '#CBD5E1', font: { size: 11, weight: 'bold' } }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        /* ----------------------------------------------------
+           APPLICATION STATE & TIMELINE LOGIC
+        ---------------------------------------------------- */
+        let currentHourIndex = 0;
+        let isPlaying = false;
+        let playInterval = null;
+
+        function updateUIForHour(hourIdx) {
+            currentHourIndex = parseInt(hourIdx);
+            const data = HOURLY_RESULTS[currentHourIndex];
+
+            // 1. Update RAG Banner
+            const banner = document.getElementById('ragBanner');
+            const ragScoreBadge = document.getElementById('ragScoreBadge');
+            const scoreValue = document.getElementById('scoreValue');
+            const ragStatusPill = document.getElementById('ragStatusPill');
+            const ragStatusTitle = document.getElementById('ragStatusTitle');
+            const ragStatusSubtitle = document.getElementById('ragStatusSubtitle');
+            const timeDisplay = document.getElementById('replayTimeDisplay');
+
+            timeDisplay.textContent = `${data.hourStr} IST`;
+            scoreValue.textContent = Math.round(data.severity);
+
+            // Audio Alert if RED or AMBER
+            if (data.rag === 'RED') {
+                playCrisisSiren();
+            } else if (data.rag === 'AMBER') {
+                playChirp(600, 0.15);
+            }
+
+            // Banner Style Switching
+            if (data.rag === 'RED') {
+                banner.className = "p-5 rounded-2xl border transition-all duration-500 glow-red animate-beacon-red bg-gradient-to-r from-red-950/60 via-slate-900 to-slate-950 border-red-500/50";
+                ragScoreBadge.className = "w-20 h-20 rounded-2xl flex flex-col items-center justify-center font-mono font-black text-3xl shadow-inner bg-red-500/20 text-red-400 border border-red-500/50 animate-pulse";
+                ragStatusPill.className = "px-3 py-1 rounded-md text-xs font-mono font-bold tracking-wider uppercase bg-red-500/20 text-red-400 border border-red-500/50 flex items-center gap-1.5";
+                ragStatusPill.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-400 animate-ping"></span> RED · CRISIS PAGING ACTIVE`;
+                ragStatusTitle.textContent = "Urgent: Negative velocity & viral reach spike";
+                ragStatusSubtitle.textContent = `Battery thermal runaway complaints viral on X/Reddit. Telegram bot fired alert payload to PR on-call lead.`;
+            } else if (data.rag === 'AMBER') {
+                banner.className = "p-5 rounded-2xl border transition-all duration-500 glow-amber bg-gradient-to-r from-amber-950/50 via-slate-900 to-slate-950 border-amber-500/40";
+                ragScoreBadge.className = "w-20 h-20 rounded-2xl flex flex-col items-center justify-center font-mono font-black text-3xl shadow-inner bg-amber-500/20 text-amber-400 border border-amber-500/40";
+                ragStatusPill.className = "px-3 py-1 rounded-md text-xs font-mono font-bold tracking-wider uppercase bg-amber-500/20 text-amber-400 border border-amber-500/40";
+                ragStatusPill.innerHTML = `● AMBER · ELEVATED RISK`;
+                ragStatusTitle.textContent = "Elevated negative chatter velocity detected";
+                ragStatusSubtitle.textContent = `Mentions crossing 40/hr with 58% negative sentiment. Standby notification sent to social ops.`;
+            } else {
+                banner.className = "p-5 rounded-2xl border transition-all duration-500 glow-green bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-950 border-emerald-500/30";
+                ragScoreBadge.className = "w-20 h-20 rounded-2xl flex flex-col items-center justify-center font-mono font-black text-3xl shadow-inner bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+                ragStatusPill.className = "px-3 py-1 rounded-md text-xs font-mono font-bold tracking-wider uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40";
+                ragStatusPill.innerHTML = `● GREEN · NOMINAL`;
+                ragStatusTitle.textContent = "Normal brand sentiment & steady baseline velocity";
+                ragStatusSubtitle.textContent = `All conversational parameters are within baseline standard deviations. No escalation required.`;
+            }
+
+            // 2. Update 3 Formula Cards
+            // Volume
+            document.getElementById('zscoreBadge').textContent = `Z = ${data.zScore >= 0 ? '+' : ''}${data.zScore}`;
+            document.getElementById('volPoints').textContent = data.volComponent;
+            document.getElementById('volHourlyVal').textContent = `${data.count} / hr (μ=12, σ=8.5)`;
+            document.getElementById('volProgressBar').style.width = `${Math.min(100, data.normZ * 100)}%`;
+
+            // Negative Share
+            const negPercent = Math.round(data.negShare * 100);
+            document.getElementById('negShareBadge').textContent = `${negPercent}% Negative`;
+            document.getElementById('negPoints').textContent = data.negComponent;
+            document.getElementById('negCountDisplay').textContent = `${data.negCount} neg / ${data.count} total`;
+            document.getElementById('negProgressBar').style.width = `${negPercent}%`;
+            document.getElementById('negProgressBar').className = `h-full rounded-full transition-all duration-300 ${negPercent > 60 ? 'bg-red-500' : (negPercent > 35 ? 'bg-amber-500' : 'bg-emerald-500')}`;
+
+            // Influencer
+            const reachK = data.maxReach >= 1000 ? `${(data.maxReach / 1000).toFixed(1)}k` : data.maxReach;
+            document.getElementById('infReachBadge').textContent = `${reachK} Peak Reach`;
+            document.getElementById('infPoints').textContent = data.infComponent;
+            document.getElementById('infTierDisplay').textContent = data.maxReach > 100000 ? 'Tier 1 Key Opinion Leader' : (data.maxReach > 20000 ? 'Tier 2 Mid-Tier' : 'Tier 3 Micro/Consumer');
+            document.getElementById('infProgressBar').style.width = `${Math.min(100, data.infAmp * 100)}%`;
+
+            // 3. Update Topic Chart
+            updateTopicChartData(data.mentions);
+
+            // 4. Update Filtered Mention Stream
+            applyFilters();
+        }
+
+        function updateTopicChartData(mentions) {
+            if (!topicChart) return;
+            const topicCounts = {
+                "battery/range": 0,
+                "service & warranty": 0,
+                "delivery": 0,
+                "software/app": 0,
+                "pricing": 0
+            };
+            mentions.forEach(m => {
+                if (m.sentiment === 'NEGATIVE' && topicCounts[m.topic] !== undefined) {
+                    topicCounts[m.topic]++;
+                }
+            });
+            topicChart.data.datasets[0].data = [
+                topicCounts["battery/range"],
+                topicCounts["service & warranty"],
+                topicCounts["delivery"],
+                topicCounts["software/app"],
+                topicCounts["pricing"]
+            ];
+            topicChart.update();
+        }
+
+        function handleSliderChange(val) {
+            document.getElementById('timelineSlider').value = val;
+            updateUIForHour(val);
+        }
+
+        function togglePlayTimeline() {
+            const btn = document.getElementById('playBtn');
+            if (isPlaying) {
+                clearInterval(playInterval);
+                isPlaying = false;
+                btn.innerHTML = `<i class="fa-solid fa-play mr-1"></i>Play`;
+            } else {
+                isPlaying = true;
+                btn.innerHTML = `<i class="fa-solid fa-pause mr-1"></i>Pause`;
+                playInterval = setInterval(() => {
+                    let next = (currentHourIndex + 1) % HOURLY_CONFIG.length;
+                    handleSliderChange(next);
+                    if (next === HOURLY_CONFIG.length - 1) {
+                        // Loop finished
+                        clearInterval(playInterval);
+                        isPlaying = false;
+                        btn.innerHTML = `<i class="fa-solid fa-play mr-1"></i>Replay`;
+                    }
+                }, 2200);
+            }
+        }
+
+        /* ----------------------------------------------------
+           MENTION FEED & HIGHLIGHTING (Hinglish / Sarcasm)
+        ---------------------------------------------------- */
+        function highlightHinglishAndSarcasm(text) {
+            let processed = text;
+            const hinglishTokens = ['bekar', 'ghatiya', 'kharab'];
+            hinglishTokens.forEach(t => {
+                const regex = new RegExp(`(${t})`, 'gi');
+                processed = processed.replace(regex, `<span class="bg-red-500/20 text-red-300 border border-red-500/40 px-1 py-0.5 rounded font-mono font-semibold">$1</span>`);
+            });
+            if (text.includes("Wow great") || text.includes("Fabulous service")) {
+                processed = `<span class="text-purple-300 font-medium">⚡ [Sarcasm Detected]:</span> ` + processed;
+            }
+            return processed;
+        }
+
+        function applyFilters() {
+            const sentimentFilter = document.getElementById('filterSentiment').value;
+            const topicFilter = document.getElementById('filterTopic').value;
+            const sourceFilter = document.getElementById('filterSource').value;
+
+            // Consider mentions up to current simulated hour (cumulative view)
+            const activeMentions = ALL_MENTIONS.filter(m => m.hourIndex <= currentHourIndex);
+
+            const filtered = activeMentions.filter(m => {
+                if (sentimentFilter !== 'ALL' && m.sentiment !== sentimentFilter) return false;
+                if (topicFilter !== 'ALL' && m.topic !== topicFilter) return false;
+                if (sourceFilter !== 'ALL' && m.source !== sourceFilter) return false;
+                return true;
+            });
+
+            // Update Count Badge
+            document.getElementById('filteredCountBadge').textContent = `Showing ${filtered.length} of ${activeMentions.length} cumulative mentions`;
+
+            // Render container
+            const container = document.getElementById('mentionContainer');
+            container.innerHTML = '';
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-500 text-xs font-mono">
+                        No mentions match the active filter criteria for this time window.
+                    </div>
+                `;
+                return;
+            }
+
+            // Render top 25 recent
+            filtered.slice(-25).reverse().forEach(m => {
+                const card = document.createElement('div');
+                card.className = "p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition flex flex-col gap-2";
+
+                // Sentiment Badge Color
+                let sentBadge = '';
+                if (m.sentiment === 'NEGATIVE') {
+                    sentBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-950/80 text-red-400 border border-red-800/60">NEG (-0.84)</span>`;
+                } else if (m.sentiment === 'POSITIVE') {
+                    sentBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">POS (+0.72)</span>`;
+                } else {
+                    sentBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700">NEU (0.00)</span>`;
+                }
+
+                // Source Icon
+                let srcIcon = 'fa-brands fa-x-twitter text-slate-300';
+                if (m.source === 'Reddit') srcIcon = 'fa-brands fa-reddit text-orange-500';
+                if (m.source === 'YouTube') srcIcon = 'fa-brands fa-youtube text-red-500';
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="${srcIcon}"></i>
+                            <span class="font-mono text-slate-400 text-[11px]">${m.source}</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="font-mono text-slate-400 text-[11px]">${m.timestamp}</span>
+                            <span class="text-slate-600">·</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-blue-300 border border-slate-700">${m.topic}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${m.reach > 20000 ? `<span class="text-[10px] font-mono text-purple-400 font-semibold bg-purple-950/60 border border-purple-800/50 px-1.5 py-0.5 rounded"><i class="fa-solid fa-fire mr-1"></i>${(m.reach/1000).toFixed(1)}k Reach</span>` : ''}
+                            ${sentBadge}
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed font-sans">
+                        ${highlightHinglishAndSarcasm(m.text)}
+                    </p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        /* ----------------------------------------------------
+           MODAL 1: Telegram Bot / Alert Dispatcher
+        ---------------------------------------------------- */
+        function triggerDispatchModal() {
+            const currentData = HOURLY_RESULTS[currentHourIndex];
+            const modal = document.getElementById('alertModal');
+            
+            // Populate current values
+            const badge = document.getElementById('modalAlertBadge');
+            const sev = document.getElementById('modalSeverity');
+            const topIssue = document.getElementById('modalTopIssue');
+            const vel = document.getElementById('modalVelocity');
+            const reach = document.getElementById('modalReach');
+            const holding = document.getElementById('holdingStatementText');
+            const timeSpan = document.getElementById('modalTimestamp');
+
+            timeSpan.textContent = `${currentData.hourStr} IST`;
+            sev.textContent = `${currentData.severity} / 100 (Threshold ${currentData.severity >= 70 ? '≥ 70' : (currentData.severity >= 40 ? '40-69' : '< 40')})`;
+            vel.textContent = `${Math.round(currentData.negShare * 100)}% Neg · Z-Score: +${currentData.zScore}`;
+            reach.textContent = currentData.maxReach > 50000 ? `@TechInfluencerOfficial (${(currentData.maxReach/1000).toFixed(1)}K reach)` : `Standard consumer network (${currentData.maxReach} reach)`;
+
+            if (currentData.rag === 'RED') {
+                badge.className = "px-2.5 py-1 rounded font-bold uppercase tracking-wide bg-red-600 text-white animate-pulse";
+                badge.textContent = "🚨 RED CRISIS ALERT";
+                topIssue.textContent = "Battery / Range (Thermal Runaway Chatter)";
+                holding.textContent = `"We are aware of the isolated vehicle range reports shared this evening. Our safety & engineering teams are currently reviewing telematics data directly with the affected owners. We will share a technical bulletin within 2 hours. Safety remains our paramount priority."`;
+            } else if (currentData.rag === 'AMBER') {
+                badge.className = "px-2.5 py-1 rounded font-bold uppercase tracking-wide bg-amber-600 text-white";
+                badge.textContent = "⚠️ AMBER ELEVATED RISK";
+                topIssue.textContent = "Service Center Backlog & Warranty Turnaround";
+                holding.textContent = `"We acknowledge customer feedback regarding service center appointment scheduling delays. We have added dedicated diagnostic technicians across key regional hubs to expedite resolutions."`;
+            } else {
+                badge.className = "px-2.5 py-1 rounded font-bold uppercase tracking-wide bg-emerald-600 text-white";
+                badge.textContent = "✅ GREEN NOMINAL (TEST PAYLOAD)";
+                topIssue.textContent = "Routine Product Discussions & Feature Inquiries";
+                holding.textContent = `"Thank you for being part of our community. Our customer care desk is active 24/7 for any individual queries."`;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeDispatchModal() {
+            document.getElementById('alertModal').classList.add('hidden');
+        }
+
+        function copyPayloadToClipboard() {
+            const data = HOURLY_RESULTS[currentHourIndex];
+            const payload = {
+                bot_service: "Telegram BotFather API",
+                alert_level: data.rag,
+                crisis_score: data.severity,
+                timestamp: `${data.hourStr} IST`,
+                top_issue_family: "Battery / Range",
+                metrics: {
+                    volume_z_score: data.zScore,
+                    negative_sentiment_share: data.negShare,
+                    influencer_amplification: data.infAmp
+                },
+                sla_minutes: data.rag === 'RED' ? 15 : 60,
+                recommended_action: data.rag === 'RED' ? "Escalate to Head of PR; Dispatch BMS firmware advisory" : "Monitor channel hourly"
+            };
+
+            const textToCopy = JSON.stringify(payload, null, 2);
+            
+            // Clipboard fallback
+            const dummy = document.createElement("textarea");
+            dummy.value = textToCopy;
+            document.body.appendChild(dummy);
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            const btnText = document.getElementById('copyBtnText');
+            btnText.textContent = "Payload Copied!";
+            setTimeout(() => {
+                btnText.textContent = "Copy Raw Payload JSON";
+            }, 2000);
+        }
+
+        function sendSimulatedAlert() {
+            const btn = document.getElementById('sendSimulatedAlertBtn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Dispatching via Bot API...`;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> Dispatched to On-Call Roster!`;
+                btn.classList.remove('bg-red-600', 'hover:bg-red-500');
+                btn.classList.add('bg-emerald-600');
+                
+                setTimeout(() => {
+                    closeDispatchModal();
+                    btn.innerHTML = originalHTML;
+                    btn.classList.add('bg-red-600', 'hover:bg-red-500');
+                    btn.classList.remove('bg-emerald-600');
+                    btn.disabled = false;
+                }, 1200);
+            }, 1000);
+        }
+
+        /* ----------------------------------------------------
+           MODAL 2: Step 3 Hand-Audit Baseline
+        ---------------------------------------------------- */
+        function openAuditModal() {
+            document.getElementById('auditModal').classList.remove('hidden');
+        }
+
+        function closeAuditModal() {
+            document.getElementById('auditModal').classList.add('hidden');
+        }
+
+        /* ----------------------------------------------------
+           MODAL 3: Get Public Link Modal Handlers
+        ---------------------------------------------------- */
+        function openShareModal() {
+            document.getElementById('shareModal').classList.remove('hidden');
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.add('hidden');
+        }
+
+        function downloadHtmlFile() {
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Crisis_Alert_Engine_Prototype.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            initCharts();
+            updateUIForHour(0);
+        };
+    </script>
+
+
+      <script>
+        (function() {
+          // The root element's background fills the whole page. As in CSS,
+          // the body's background is used when the root element has none.
+          function getPageBackgroundColor() {
+            var docStyle = window.getComputedStyle(document.documentElement);
+            var color = docStyle.backgroundColor;
+            if ((color === 'rgba(0, 0, 0, 0)' || color === 'transparent') &&
+                docStyle.backgroundImage === 'none' && document.body) {
+              color = window.getComputedStyle(document.body).backgroundColor;
+            }
+            return color || '';
+          }
+
+          var lastReportedColor = '';
+          function reportBackgroundColor() {
+            try {
+              var color = getPageBackgroundColor();
+              if (color === lastReportedColor) return;
+              lastReportedColor = color;
+              window.parent.postMessage({
+                type: 'ATARI_CODE_EMBED_BACKGROUND_COLOR',
+                backgroundColor: color
+              }, '*');
+            } catch (e) {}
+          }
+
+          // The page background usually changes through an attribute on html
+          // or body (for example a theme class), a style sheet in head, or the
+          // system color scheme.
+          if (typeof MutationObserver !== 'undefined') {
+            var observer = new MutationObserver(reportBackgroundColor);
+            observer.observe(document.documentElement, {attributes: true});
+            if (document.body) {
+              observer.observe(document.body, {attributes: true});
+            }
+            if (document.head) {
+              observer.observe(document.head, {
+                attributes: true,
+                childList: true,
+                subtree: true,
+                characterData: true
+              });
+            }
+          }
+          var colorSchemeQuery =
+              window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+          if (colorSchemeQuery && colorSchemeQuery.addEventListener) {
+            colorSchemeQuery.addEventListener('change', reportBackgroundColor);
+          }
+          window.addEventListener('load', reportBackgroundColor);
+          window.addEventListener('transitionend', reportBackgroundColor);
+          window.addEventListener('animationend', reportBackgroundColor);
+          reportBackgroundColor();
+        })();
+      </script>
+    </body></html>
